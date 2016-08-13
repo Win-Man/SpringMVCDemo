@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="js/jquery.min.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css" />
+    <title>Login Page</title>
+</head>
+<body>
+    <div style="text-align: center">
+        <h1><strong>欢迎登陆</strong></h1>
+        <div>
+            <label style="">账号:</label>
+            <input type="text" id="account"  class="form-control" placeholder="请输入账号" style="width: 200px;"/>
+        </div>
+        <div>
+            <label style="">密码:</label>
+            <input type="password" id="password" class="form-control" placeholder="请输入密码" style="width: 200px"/>
+        </div>
+        <div>
+            <button  id="loginbtn" type="button" class="btn btn-primary">登陆</button>
+            <button  id="resetbtn" type="button" class="btn btn-default">重置</button>
+        </div>
+    </div>
+
+</body>
+<script>
+    LoginData = {}
+    LoginUtil = {
+        init:function(){
+            $('#loginbtn').on('click',function () {
+              LoginUtil.loginButtonClick();
+            });
+            $('#resetbtn').on('click',function () {
+                LoginUtil.resetButtonClick();
+            });
+        },
+        loginButtonClick:function () {
+            $.ajax({
+                type:'POST',
+                url:'login.json',
+                data:{'account':$('#account').val(),
+                    'password':$('#password').val()
+                },
+                success:function(json){
+                    if(json.CODE == 1){
+                        window.location.href="admin";
+                    }else{
+                        alert(json.MESSAGE);
+                    }
+                },
+                error:function () {
+                    alert('failed')
+                }
+            })
+        },
+        resetButtonClick:function () {
+            $('#account').val("");
+            $('#password').val("");
+        }
+    }
+    $(function(){
+        LoginUtil.init();
+    })
+
+
+
+</script>
+</html>

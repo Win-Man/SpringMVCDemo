@@ -1,0 +1,75 @@
+<div>
+    <table>
+        <tr>
+            <td>省份：</td>
+            <td>
+                <div class="input-group">
+                    <input id="weather-prov"  type="text" class="form-control" value="">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" tabindex="-1">
+                            <span class="caret"></span>
+                        </button>
+                        <ul id="prov-dropdownList" class="dropdown-menu pull-right">
+                        </ul>
+                    </div><!-- /btn-group -->
+                </div><!-- /input-group -->
+            </td>
+            <td>地区：</td>
+            <td>
+                <div class="input-group">
+                    <input id="weather-district"  type="text" class="form-control" value="">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" tabindex="-1">
+                            <span class="caret"></span>
+                        </button>
+                        <ul id="district-dropdownList" class="dropdown-menu pull-right">
+                        </ul>
+                    </div><!-- /btn-group -->
+                </div><!-- /input-group -->
+            </td>
+            <td>城市：</td>
+            <td>
+                <div class="input-group">
+                    <input id="weather-name"  type="text" class="form-control" value="">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" tabindex="-1">
+                            <span class="caret"></span>
+                        </button>
+                        <ul id="name-dropdownList" class="dropdown-menu pull-right">
+                        </ul>
+                    </div><!-- /btn-group -->
+                </div><!-- /input-group -->
+            </td>
+            <td><button id="query-weather-btn" class="btn btn-primary" style="margin-left: 20px">查询</button></td>
+        </tr>
+    </table>
+</div>
+<div class="weather-content" style="border-top:1px solid #000000;margin-top: 5px;padding-top:5px;">
+
+</div>
+<script>
+    WeatherData={}
+    WeatherUtil={
+        init:function () {
+            $('#query-weather-btn').on('click',function () {
+                WeatherUtil.sendFunc()
+            })
+        },
+        sendFunc:function () {
+            $.ajax({
+                type:'GET',
+                url:'admin/weather/query',
+                data:{'areaId':'101010100'},
+                success:function (json) {
+                    alert(json['air']['101010100']['2001006']['003']);
+                },
+                error:function(){
+                    $('.weather-content').append('<div>请求失败</div>')
+                }
+            })
+        }
+    }
+    $(function(){
+        WeatherUtil.init();
+    })
+</script>

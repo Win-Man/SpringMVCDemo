@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="js/jquery.min.js"></script>
+    <title>Login Page</title>
+</head>
+<body>
+username: <input type="text" id="username"><br><br>
+password: <input type="password" id="password"><br><br>
+<button id="loginbtn">登录</button>
+</body>
+<script>
+    LoginData = {}
+    LoginUtil = {
+        init:function(){
+          $('#loginbtn').on('click',function () {
+              LoginUtil.loginButtonClick();
+          })
+        },
+        loginButtonClick:function () {
+            $.ajax({
+                type:'POST',
+                url:'loginConfirm',
+                data:{'username':$('#username').val(),
+                    'password':$('#password').val()
+                },
+                success:function(json){
+                    if(json.CODE == 1){
+                        alert('login success');
+                        window.location.href="admin";
+                    }else{
+                        alert(json.MESSAGE);
+                    }
+                },
+                error:function () {
+                    alert('failed')
+                }
+            })
+        }
+    }
+    $(function(){
+        LoginUtil.init();
+    })
+
+</script>
+</html>

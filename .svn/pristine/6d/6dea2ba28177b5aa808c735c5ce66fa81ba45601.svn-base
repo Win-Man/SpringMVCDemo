@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+this is test page
+[#list users as user]
+    username : ${user.name}<br/>
+    password : ${user.remark}
+[/#list]
+</body>
+</html>

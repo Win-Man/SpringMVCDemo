@@ -1,0 +1,59 @@
+<div>
+    <form id="role-edit-form">
+        <table>
+            <tr>
+                <td>角色名称:</td>
+                <td>
+                    <input id="roleName" name="roleName" type="text" style="width: 200px" value="[#if role??]${role.roleName}[/#if]"/>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<script>
+    RoleEditData={
+        selectedItemId:null,
+        saveRoleData:null
+    }
+    RoleEditUtil={
+        init:function () {
+
+        },
+        saveRole:function () {
+            $('#role-edit-modal').modal('hide');
+            saveRoleData={
+                'roleId':RoleEditData.selectedItemId,
+                'roleName':$('#roleName').val()
+            }
+            if(RoleManageData.selectItem != null){
+                RoleEditData.selectedItemId = RoleManageData.selectItem.id;
+            }else{
+                RoleEditData.selectedItemId = 0;
+            }
+            $.ajax({
+                type:'POST',
+                url:'admin/roleSave',
+                data:{
+                    'roleId':RoleEditData.selectedItemId,
+                    'roleName':$('#roleName').val()
+                },
+                success:function (json) {
+                    if(json.CODE && json.CODE == 1){
+                        createConfirmDialog('role-edit-confirm','确认框',json.MESSAGE);
+                        RoleManageData.roleTable.load();
+                    }else{
+                        createConfirmDialog('role-edit-confirm','确认框',json.MESSAGE);
+                    }
+                },
+                error:function () {
+                    alert('加载失败');
+                }
+            })
+        }
+    }
+
+    $(function () {
+        RoleEditUtil.init()
+    })
+
+</script>

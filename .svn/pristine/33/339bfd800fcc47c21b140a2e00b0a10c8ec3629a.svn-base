@@ -1,0 +1,71 @@
+<div>
+    <table>
+        <tr>
+            <td>账户名称</td>
+            <td><input id="author-name" placeholder="作者名字" type="text"/></td>
+            <td><button id="query-author-btn" class="btn btn-primary" style="margin-left: 20px">查询</button></td>
+        </tr>
+    </table>
+</div>
+<div id="grid-author">
+    <table id="table-author" class="" style="height:200px;width:200px">
+    </table>
+    <div id="pg-author" style="text-align: right"></div>
+</div>
+<div id="author-view"></div>
+
+<script>
+    JianshuData = {
+        paginationBar: $('#pg-author').mmPaginator({'limitList': [5]}),
+        authorTable: null,
+        selectItem:null
+    };
+    JianshuUtil = {
+        init: function () {
+            JianshuUtil.initAuthorTable();
+            $('#query-author-btn').on('click',function () {
+                JianshuData.authorTable.load();
+            })
+        },
+        initAuthorTable: function () {
+            var cols = [
+                {title: 'id', name: 'id', width: 200, hidden:true,sortable: false, aligin:'center'},
+                {title: '头像', name: 'avatar', width: 90, sortable: true, aligin: 'left',renderer:function(val,item,rowIndex){
+                    var avatar = '<img src="'+item.avatarUrl+'" style="width: 90px;height:90px;">'
+                    return avatar;
+                }},
+                {title: '简书ID', name: 'jianshuId', width: 200, sortable: true, aligin: 'left'},
+                {title: '作者名字', name: 'name', width: 200, sortable: true, aligin: 'left'},
+                {title: '操作',name: 'operator',width: 100,sortable: false,aligin: 'center',renderer: function (val, item, rowIndex) {
+                    var modifyObj = '<a class="" href="#" title="修改"><span class="glyphicon glyphicon-pencil" style="font-size: 12px; color: #777; padding-right: 10px;"></span></a>';
+                    return modifyObj;
+                }
+                }
+            ];
+            JianshuData.authorTable = $('#table-author').mmGrid({
+                height:'auto',
+                cols:cols,
+                url:'admin/jianshu/author/List',
+                method:'get',
+                params:function () {
+                    data = {
+                        'name':$('#author-name').val()
+                    };
+                    return data;
+                },
+                plugins: [JianshuData.paginationBar]
+            });
+            JianshuData.authorTable.on('cellSelected',function(e,item,rowIndex,colIndex){
+                JianshuData.selectItem = item;
+                if($(e.target).is('.glyphicon-pencil')){
+                    createConfirmAndCancleDialogWitnLoad('author-view','作者信息','admin/jianshu/author/view',{},'');
+                }
+            });
+        }
+
+    };
+    $(function () {
+        JianshuUtil.init();
+    })
+
+</script>

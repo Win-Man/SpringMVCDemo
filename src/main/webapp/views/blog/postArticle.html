@@ -1,0 +1,60 @@
+<form id="form" style="height: 100%;width: 100%">
+    [#if article??]
+    <table>
+        <tr>
+            <input id="id" name="id" hidden="true" value="[#if article.id??]${article.id}[/#if]">
+            <td><label>文章标题:</label></td>
+            <td><input id="title" name="title" type="text" class="form-control" value="[#if article.title??]${article.title}[/#if]" placeholder="请输入文章标题"/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2"><label>文章内容：</label></td>
+        </tr>
+        <tr>
+            <td colspan="2"><textarea id="content" name="content" rows="20" class="span7" >[#if article.content??]${article.content}[/#if]</textarea></td>
+        </tr>
+        <tr>
+            <td colspan="2"><button id="submit" type="button" class="btn btn-default">提交</button></td>
+        </tr>
+        <input id="articleAbstract" name="articleAbstract" type="hidden" />
+
+    </table>
+    [/#if]
+</form>
+<script>
+
+    PostArticleData={
+        Editor:null
+    }
+    PostArticleUtil={
+        init:function(){
+            PostArticleData.Editor = new wangEditor('content');
+            PostArticleData.Editor.create();
+            $('#submit').on('click',function () {
+                PostArticleUtil.submitFunc();
+            });
+        },
+        submitFunc:function(){
+            $('#articleAbstract').val(PostArticleData.Editor.$txt.text().substring(0,100));
+            var data = $('#form').serialize();
+            //data.articleAbstract = PostArticleData.Editor.$txt.text().substring(0,100);
+            //data.content = PostArticleData.Editor.$txt.html();
+            //alert('data:'+data);
+            $.ajax({
+                type: 'POST',
+                url: 'admin/articleSave',
+                data: data,
+                success: function (page) {
+                    $('.blog-content').html(page);
+                },
+                error: function () {
+                    $('.blog-content').html('<div>网络错误</div>')
+                }
+            });
+
+        }
+    }
+    $(function(){
+        PostArticleUtil.init();
+    });
+</script>

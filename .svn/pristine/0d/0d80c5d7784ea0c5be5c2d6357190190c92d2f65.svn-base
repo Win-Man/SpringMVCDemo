@@ -1,0 +1,145 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>后台管理</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <script src="js/jquery.min.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="js/mmGrid.js"></script>
+    <script src="js/mmPaginator.js"></script>
+    <script src="js/private.js"></script>
+    <script src="wangEditor/js/wangEditor.min.js"></script>
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/mmGrid.css" />
+    <link rel="stylesheet" href="css/mmPaginator.css" />
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="wangEditor/css/wangEditor.min.css" />
+    <!--[if lte IE 8]><link rel="stylesheet" href="css/ie/v8.css" /><![endif]-->
+</head>
+<body >
+<!-- navbar -->
+<div class="blog-header">
+    <div class="blog-header-title">
+        <div>WinMan's Blog</div>
+    </div>
+    <div class="blog-header-content">
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                [#if user??]
+                    ${user.account}
+                [/#if]
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="#">个人信息</a></li>
+                <li><a href="#">发表文章</a></li>
+                <li class="divider"></li>
+                <li><a href="logout">退出登录</a></li>
+            </ul>
+        </li>
+    </div>
+</div>
+<!-- navbar end -->
+<!-- main content -->
+<div class="blog-main">
+    <div class="blog-aside">
+        <ul id="accordion" class="accordion">
+            <li>
+                <div class="link">后台管理<i class="glyphicon glyphicon-chevron-down"></i></div>
+                <ul class="submenu">
+                    <li><a url="userManage">用户管理</a></li>
+                    <li><a url="roleManage">角色管理</a></li>
+                </ul>
+            </li>
+            <li>
+                <div class="link">Blog-Info<i class="glyphicon glyphicon-chevron-down"></i></div>
+                <ul class="submenu">
+                    <li><a url="blogInfoManage">博客管理</a></li>
+                    <li><a url="postArticle">发表文章</a></li>
+                    <li><a url="managerArticle">文章管理</a></li>
+                </ul>
+            </li>
+            <li>
+                <div class="link">杂七杂八<i class="glyphicon glyphicon-chevron-down"></i></div>
+                <ul class="submenu">
+                    <li><a url="fileupload">文件上传</a></li>
+                    <li><a url="qiniu">七牛存储</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="blog-content">
+
+    </div>
+</div>
+<!-- main content end -->
+</body>
+</html>
+<script>
+    AdminData={
+        clickItem:null
+    }
+    AdminUtil = {
+        init:function () {
+            $('.accordion li ul li').on('click',function () {
+                AdminData.clickItem = $(this);
+                AdminUtil.asideMenuClick();
+            })
+            AdminUtil.accordionInit()
+        },
+        asideMenuClick:function () {
+            var $this = AdminData.clickItem;
+            $('.submenu').each(function () {
+                $(this).find('li').removeClass('blog-active')
+            })
+            var url = $this.find('a').attr('url');
+            $this.addClass('blog-active')
+            $.ajax({
+                type: 'GET',
+                url: 'admin/'+url,
+                data: '',
+                success: function (page) {
+                    $('.blog-content').html(page);
+                },
+                error: function () {
+                    $('.blog-content').html('<div>网络错误</div>')
+                }
+            });
+        },
+        accordionInit:function(){
+            var Accordion = function(el, multiple) {
+                this.el = el || {};
+                this.multiple = multiple || false;
+
+                // Variables privadas
+                var links = this.el.find('.link');
+                // Evento
+                links.on('click', {el: this.el, multiple: this.multiple}, this.dropdown)
+            }
+
+            Accordion.prototype.dropdown = function(e) {
+                var $el = e.data.el;
+                $this = $(this),
+                        $next = $this.next();
+
+                $next.slideToggle();
+                $this.parent().toggleClass('open');
+
+                if (!e.data.multiple) {
+                    $el.find('.submenu').not($next).slideUp().parent().removeClass('open');
+                };
+            }
+
+            var accordion = new Accordion($('#accordion'), false);
+        }
+    }
+    $(function(){
+        AdminUtil.init()
+    })
+
+
+</script>

@@ -1,0 +1,25 @@
+package com.sg.model;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import java.util.List;
+
+/**
+ * Created by sg on 2016/7/28.
+ */
+@Entity
+@Table(name="role")
+public class Role extends BaseEntity{
+    @OneToMany(mappedBy = "role",cascade = CascadeType.ALL)
+    private List<UserEntity> users;
+
+    public List<UserEntity> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<UserEntity> users) {
+        this.users = users;
+    }
+}

@@ -1,0 +1,18 @@
+package com.sg.web.util;
+
+import org.springframework.data.domain.Sort;
+
+/**
+ * Created by sg on 2016/7/21.
+ */
+public class StringUtils {
+
+    public static Sort.Direction getSortType(String sortType){
+        if(sortType.equalsIgnoreCase("desc")){
+            return Sort.Direction.DESC;
+        }else if(sortType.equalsIgnoreCase("asc")){
+            return Sort.Direction.ASC;
+        }
+        return Sort.Direction.DESC;
+    }
+}

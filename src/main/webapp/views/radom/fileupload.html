@@ -1,0 +1,32 @@
+<form name="userForm2" action="/SpringMVCDemo/fileupload/upload" enctype="multipart/form-data" method="post"">
+<div id="file1">
+    <input type="file" name="file1">
+</div>
+
+<input type="submit" class="btn btn-default" value="上传" >
+</form>
+<button id="file-add" class="btn btn-default">添加文件</button>
+<script type="text/javascript">
+    FileUploadData={
+        fileCount : 2
+    }
+    FileUploadUtil={
+        init:function(){
+            $('#file-add').on('click',function(){
+                FileUploadUtil.fileAddClick();
+            })
+        },
+        fileAddClick:function(){
+            var fileAddHtml = '<div id="file'+FileUploadData.fileCount+'" name='+'"file'+'">';
+            fileAddHtml += '<input type="'+'file" name='+'"file'+FileUploadData.fileCount+'">';
+            fileAddHtml += '</div>';
+            $('#file1').after(fileAddHtml);
+            FileUploadData.fileCount++;
+        }
+    }
+    $(function(){
+        FileUploadUtil.init();
+
+    })
+
+</script>

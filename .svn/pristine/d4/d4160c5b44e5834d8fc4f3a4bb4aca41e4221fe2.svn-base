@@ -1,0 +1,13 @@
+package com.sg.repository;
+
+import com.sg.model.Role;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
+/**
+ * Created by sg on 2016/7/28.
+ */
+public interface RoleDao extends JpaSpecificationExecutor<Role>,JpaRepository<Role,Long> {
+
+
+}

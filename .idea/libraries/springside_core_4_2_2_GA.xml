@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="springside-core-4.2.2.GA">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../scs/target/scs-0.0.1-SNAPSHOT/WEB-INF/lib/springside-core-4.2.2.GA.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

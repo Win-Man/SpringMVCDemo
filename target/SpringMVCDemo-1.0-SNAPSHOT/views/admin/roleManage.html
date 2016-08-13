@@ -1,0 +1,96 @@
+<div>
+        <table>
+            <tr>
+                <td>角色名称</td>
+                <td><input id="roleNameSearch" placeholder="角色名称" type="text"/></td>
+                <td><button id="query-role-btn" class="btn btn-primary" style="margin-left: 20px">查询</button></td>
+                <td><button id="add-role-btn" class="btn btn-primary" style="margin-left: 20px">新增</button></td>
+            </tr>
+        </table>
+</div>
+<div id="grid-role">
+    <table id="table-role" class="" style="height:200px;width:200px">
+    </table>
+    <div id="pg-role" style="text-align: right"></div>
+</div>
+<div id="role-remove"></div>
+<div id="role-edit"></div>
+<div id="role-remove-confirm"></div>
+<div id="role-edit-confirm"></div>
+<script>
+    RoleManageData = {
+        paginationBar: $('#pg-role').mmPaginator({'limitList': [10]}),
+        roleTable: null,
+        selectItem:null
+    };
+    RoleManageUtil = {
+        init: function () {
+            RoleManageUtil.initRoleTable();
+            $('#add-role-btn').on('click',function(){
+                RoleManageData.selectItem = null;
+                createConfirmAndCancleDialogWitnLoad('role-edit','角色新增','admin/roleEdit',{'roleId':0},'RoleEditUtil.saveRole()');
+            });
+            $('#query-role-btn').on('click',function () {
+                RoleManageData.roleTable.load();
+            })
+        },
+        deleteConfirmFunc:function(){
+            $('#role-remove-modal').modal('hide');
+            $.ajax({
+                type: 'POST',
+                url: 'admin/roleDelete',
+                data: {'id':RoleManageData.selectItem.id},
+                success: function (data) {
+                    if(data.CODE == '1'){
+                        createConfirmDialog('role-remove-confirm','确认框','删除成功');
+                        RoleManageData.roleTable.load();
+                    }else{
+                        createConfirmDialog('role-remove-confirm','确认框',data.MESSAGE);
+                    }
+                },
+                error: function () {
+                    alert('failed');
+                }
+            });
+        },
+        initRoleTable: function () {
+            var cols = [
+                {title: 'id', name: 'id', width: 200, hidden:true,sortable: false, aligin:'center'},
+                {title: '角色名称', name: 'roleName', width: 200, sortable: true, aligin: 'left'},
+                {title: '创建时间', name: 'createDate', width: 200, sortable: true, aligin: 'left'},
+                {title: '操作',name: 'operator',width: 200,sortable: false,aligin: 'center',renderer: function (val, item, rowIndex) {
+                    var modifyObj = '<a class="" href="#" title="修改"><span class="glyphicon glyphicon-pencil" style="font-size: 12px; color: #777; padding-right: 10px;"></span></a>';
+                    var deleteObj = '<a class="" href="#" title="删除"><span class="glyphicon glyphicon-remove" style="font-size: 12px; color: #777; padding-right: 10px;"></span></a>';
+                    return modifyObj + deleteObj;
+                }
+                }
+            ];
+            RoleManageData.roleTable = $('#table-role').mmGrid({
+                height:'auto',
+                cols:cols,
+                url:'admin/roleList',
+                method:'get',
+                params:function () {
+                    data = {
+                        'roleName':$('#roleNameSearch').val()
+                    };
+                    return data;
+                },
+                plugins: [RoleManageData.paginationBar]
+            });
+            RoleManageData.roleTable.on('cellSelected',function(e,item,rowIndex,colIndex){
+                RoleManageData.selectItem = item;
+                if($(e.target).is('.glyphicon-pencil')){
+                    createConfirmAndCancleDialogWitnLoad('role-edit','角色修改','admin/roleEdit',{'roleId':RoleManageData.selectItem.id},'RoleEditUtil.saveRole()');
+                }else if($(e.target).is('.glyphicon-remove')){
+                    createConfirmAndCancleDialog('role-remove','确认框','确定要删除吗',"RoleManageUtil.deleteConfirmFunc()");
+                }
+            });
+        }
+
+    };
+    $(function () {
+        RoleManageUtil.init();
+    })
+
+</script>

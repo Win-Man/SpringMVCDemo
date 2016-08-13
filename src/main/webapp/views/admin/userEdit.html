@@ -1,0 +1,105 @@
+<div>
+    <form id="user-edit-form">
+        <table>
+            <tr>
+                <td>账户名称:</td>
+                <td>
+                    <input id="account" name="account" class="form-control" type="text" style="width: 200px" value="[#if user??]${user.account}[/#if]"/>
+                </td>
+                <td>角色:</td>
+                <td>
+                    <div class="input-group">
+                        <input id="user-edit-role-id" type="hidden" value="[#if user??]${user.role.id}[/#if]"/>
+                        <input id="user-edit-role"  type="text" class="form-control" value="[#if user??]${user.role.roleName}[/#if]">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" tabindex="-1">
+                                <span class="caret"></span>
+                            </button>
+                            <ul id="user-dropdownList" class="dropdown-menu pull-right">
+                            </ul>
+                        </div><!-- /btn-group -->
+                    </div><!-- /input-group -->
+                </td>
+            </tr>
+            <tr>
+                <td>密码:</td>
+                <td><input id="user-password" class="form-control" type="password" style="width: 200px" value="${user.password}"/></td>
+                <td>确认密码:</td>
+                <td><input id="user-password-confirm" class="form-control" type="password" style="width: 200px" value="${user.password}"/></td>
+            </tr>
+        </table>
+    </form>
+</div>
+<script>
+    UserEditData={
+        userDropdownListSize:'',
+        userDropdownListData:[],
+        selectUserItemId:null
+    }
+    UserEditUtil={
+        init:function() {
+            UserEditUtil.getUserDropdownListData();
+            $('#user-dropdownList').on('click','a',function () {
+                UserEditUtil.dropdownListItemClick($(this));
+            })
+        },
+        getUserDropdownListData:function(){
+            $.ajax({
+                type:'POST',
+                url:'admin/allRole',
+                success:function (data) {
+                    UserEditData.userDropdownListSize = data.size;
+                    UserEditData.userDropdownListData = data.items;
+                    UserEditUtil.initUserDropdownList();
+                },
+                error:function () {
+                    alert('下拉列表加载失败')
+                }
+            });
+        },
+        initUserDropdownList:function () {
+            $('#user-dropdownList').html('');
+            $.each(UserEditData.userDropdownListData,function (index,item) {
+                $('#user-dropdownList').append('<li><a id="'+item.id+'">'+item.roleName+'</a></li>')
+            });
+        },
+        dropdownListItemClick:function(item){
+            $('#user-edit-role-id').val(item.attr('id'));
+            $('#user-edit-role').val(item.text());
+        },
+        saveUser:function () {
+            //alert($('#user-password').val() == $('#user-password-confirm').val());
+            if(UserManageData.selectItem != null){
+                UserEditData.selectUserItemId = UserManageData.selectItem.id;
+            }else{
+                UserEditData.selectUserItemId = 0;
+            }
+            var postData={
+                'userId' : UserEditData.selectUserItemId,
+                'roleId' : $('#user-edit-role-id').val(),
+                'account':$('#account').val(),
+                'password':$('#user-password').val()
+            }
+            $.ajax({
+                type:'POST',
+                url:'admin/userSave',
+                data:postData,
+                success:function (json) {
+                    if(json.CODE && json.CODE == 1){
+                        $('#user-edit-modal').modal('hide');
+                        createConfirmDialog('user-edit-confirm','确认框',json.MESSAGE);
+                        UserManageData.userTable.load();
+                    }else{
+                        createConfirmDialog('user-edit-confirm','确认框',json.MESSAGE);
+                    }
+                },
+                error:function () {
+                    alert('用户-失败')
+                }
+            });
+        }
+    }
+    $(function(){
+        UserEditUtil.init();
+    })
+</script>
