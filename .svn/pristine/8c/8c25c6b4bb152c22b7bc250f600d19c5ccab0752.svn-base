@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" name="web_exception_project:war">
-    <output-path>F:/chromedownload/web_exception_project/target</output-path>
-    <root id="archive" name="web_exception_project-0.0.1-SNAPSHOT.war">
-      <element id="artifact" artifact-name="web_exception_project:war exploded" />
-    </root>
-  </artifact>
-</component>
